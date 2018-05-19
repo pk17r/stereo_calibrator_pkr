@@ -22,7 +22,7 @@ Mat img1covered, img2covered, img1coveredsml, img2coveredsml;
 Mat K1, K2;
 Mat D1, D2;
 cv::Mat R1, R2, P1, P2;
-const float BlurThreshold = 0.000043;
+float BlurThreshold = 0.000043;
 
 Point2f ptA, ptB, ptC, ptD;
 Point2i pt1, pt2;
@@ -97,7 +97,7 @@ void load_image_points(int board_width, int board_height, int first_img, int num
   
   for (int i = first_img; i <= num_imgs; i++) {
     char left_img[100], right_img[100];
-
+    
     sprintf(left_img, "%s%s%d.%s", leftimg_dir, leftimg_filename, i, extension);
     if(!single_camera) sprintf(right_img, "%s%s%d.%s", rightimg_dir, rightimg_filename, i, extension);
 
@@ -181,8 +181,9 @@ void load_image_points(int board_width, int board_height, int first_img, int num
         if(!single_camera) {
 		  const Point *pts2 = (const cv::Point*) Mat(contour2).data;
           int npts2 = Mat(contour2).rows;
-		  polylines(img2covered, &pts2, &npts2, 1, true, Scalar(255));
-		  if(img2covered.cols > 480) resize(img2coveredsml, img2coveredsml, Size(img2covered.cols * 480 /img2covered.rows, 480), 0, 0, INTER_LINEAR);
+          polylines(img2covered, &pts2, &npts2, 1, true, Scalar(255));
+		  if(img2covered.cols > 480) resize(img2covered, img2coveredsml, Size(img2covered.cols * 480 /img2covered.rows, 480), 0, 0, INTER_LINEAR);
+		  
           imshow("Right_Img_Calibration", (img2covered.cols > 480 ? img2coveredsml : img2covered));
 		}
         waitKey(1);
@@ -208,6 +209,7 @@ void load_image_points(int board_width, int board_height, int first_img, int num
       else cout << i << ". Could not find corners!  " << (found1 ? "" : left_img) << endl;
 	}
   }
+  
   for (int i = 0; i < imagePoints1.size(); i++) {
     vector< Point2f > v1, v2;
     for (int j = 0; j < imagePoints1[i].size(); j++) {
@@ -333,6 +335,7 @@ int main(int argc, char const *argv[])
     { "camera_calib_already_done",'m',POPT_ARG_INT,&camera_calib_already_done,0,"Single camera calibration already done. Take intrinsic inputs from xml files.","INT" },
     { "leftcalib_file",'u',POPT_ARG_STRING,&leftcalib_file,0,"Left camera calibration","STR" },
     { "rightcalib_file",'v',POPT_ARG_STRING,&rightcalib_file,0,"Right camera calibration","STR" },
+    { "BlurThreshold",'t',POPT_ARG_FLOAT,&BlurThreshold,0,"Blurriness Threshold","NUM" },
     POPT_AUTOHELP
     { NULL, 0, 0, NULL, 0, NULL, NULL }
   };
