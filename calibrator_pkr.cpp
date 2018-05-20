@@ -17,7 +17,7 @@ vector< vector< Point2f > > left_img_points, right_img_points;
 
 Mat img1, img2, gray1, gray2;
 Mat gray1sml, gray2sml;
-Mat img1covered, img2covered, img1coveredsml, img2coveredsml;
+Mat img1covered, img2covered, img1covered_last, img2covered_last, img1coveredsml, img2coveredsml;
 
 Mat K1, K2;
 Mat D1, D2;
@@ -221,6 +221,8 @@ void load_image_points(int board_width, int board_height, int first_img, int num
   }
   printf("Number of Images in which Corners were found: %i\n", n_corners_found);
   printf("Number of Images below the Blurriness Threshold: %lu\n", imagePoints1.size());
+  imwrite("leftCamCoverage.png",img1covered);
+  if(!single_camera) imwrite("rightCamCoverage.png",img2covered);
 }
 
 void rectify_images(int first_img, int num_imgs, char* leftimg_dir, char* rightimg_dir, char* leftimg_filename, char* rightimg_filename, 

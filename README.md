@@ -16,6 +16,7 @@ Program to do efficient stereo image calibration and rectification. It outputs r
 
 
 ./calibrator_pkr -w 14 -h 7 -p 1 -n 300 -s 0.164 -L cam1/ -R cam2/ -l '' -r '' -o stereo_calib.yml -e png -d cam1r/ -f cam2r/ -j 0 -x 0 -m 0 -u '' -v ''
+./calibrator_pkr -w 14 -h 7 -p 1 -n 338 -s 0.164 -L cam1/ -R cam2/ -l '' -r '' -o cam1calib.yml -e png -d cam1r/ -f cam2r/ -j 0 -x 1 -m 0 -u '' -v ''
 
 
 /home/pkr/pkr-work/focus_at_25m_(15m & 35m in focus)/single_cam_calibration_2/cam1 (copy)
