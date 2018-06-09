@@ -85,15 +85,25 @@ float extractCheckerBox(int board_width, int board_height, vector< Point2f > cor
   return calcBlurriness(cropped);
 }
 
+Point2f findCheckerboxCenter(int board_width, vector< Point2f > corners) {
+  ptA = corners[0];
+  ptB = corners[board_width-1];
+  ptC = corners[corners.size()-board_width];
+  ptD = corners[corners.size()-1];
+  return Point2f((ptA.x + ptB.x + ptC.x + ptD.x)/4, (ptA.y + ptB.y + ptC.y + ptD.y)/4);
+}
+
 void load_image_points(int board_width, int board_height, int first_img, int num_imgs, 
                       float square_size, char* leftimg_dir, char* rightimg_dir, 
                       char* leftimg_filename, char* rightimg_filename, char* extension,
-                      bool single_camera) {
+                      bool single_camera, bool askForAccept, int minCheckerboxDistInPixel) {
 
   Size board_size = Size(board_width, board_height);
   int board_n = board_width * board_height;
   float img1Blur,img2Blur;
   int n_corners_found = 0;
+  Point2f last_checkerbox_center, this_checkerbox_center;
+  last_checkerbox_center = Point2f(0,0);
   
   for (int i = first_img; i <= num_imgs; i++) {
     char left_img[100], right_img[100];
@@ -118,7 +128,7 @@ void load_image_points(int board_width, int board_height, int first_img, int num
     //populate the img1covered, img2covered Mats
 	if(i == first_img)
 	{
-	  img1covered = Mat(gray1.size(),CV_8U,Scalar(1));
+	  img1covered = Mat(img1.size(),CV_8UC3,Scalar(1,1,1));
 	  img2covered = img1covered.clone();
 	  //imshow("Left_Img", img1covered);
       //waitKey(5000);
@@ -157,6 +167,18 @@ void load_image_points(int board_width, int board_height, int first_img, int num
       if(!single_camera) imshow("Right_Img", gray2sml);
       waitKey(1);
       
+      //check distance from last checkerbox center
+      this_checkerbox_center = findCheckerboxCenter(board_width, corners1);
+      float pixdist = sqrt(pow(last_checkerbox_center.x-this_checkerbox_center.x,2) + pow(last_checkerbox_center.y-this_checkerbox_center.y,2));
+      cout << " pixdist: " << pixdist ;
+      if(pixdist < minCheckerboxDistInPixel) {
+        cout << " too near" << endl;
+        continue;
+	  }
+	  else {
+        last_checkerbox_center = this_checkerbox_center;
+	  }
+      
       //calculate blurriness, reject if blur is higher than a threshold
       vector< Point> contour1, contour2;
       img1Blur = extractCheckerBox(board_width, board_height, corners1, img1, &contour1);
@@ -165,28 +187,50 @@ void load_image_points(int board_width, int board_height, int first_img, int num
       else printf("  Blurriness  %0.8f",img1Blur);
       
       if(img1Blur > BlurThreshold || img2Blur > BlurThreshold) {
-        printf("  Rejected\n");
+        printf("  Blurred\n");
         continue;
       }
       else
       {
-		printf("\n");
+		img1covered_last = img1covered.clone();	//making copy of current img1covered
 		// draw the polygon 
         const Point *pts1 = (const cv::Point*) Mat(contour1).data;
         int npts1 = Mat(contour1).rows;
-        polylines(img1covered, &pts1, &npts1, 1, true, Scalar(255));
+        polylines(img1covered, &pts1, &npts1, 1, true, Scalar(0,0,255));
         if(img1covered.cols > 480) resize(img1covered, img1coveredsml, Size(img1covered.cols * 480 /img1covered.rows, 480), 0, 0, INTER_LINEAR);
         imshow("Left_Img_Calibration", (img1covered.cols > 480 ? img1coveredsml : img1covered));
         
+        const Point *pts2;
+        int npts2;
         if(!single_camera) {
-		  const Point *pts2 = (const cv::Point*) Mat(contour2).data;
-          int npts2 = Mat(contour2).rows;
-          polylines(img2covered, &pts2, &npts2, 1, true, Scalar(255));
+	      img2covered_last = img2covered.clone();	//making copy of current img1covered
+		  pts2 = (const cv::Point*) Mat(contour2).data;
+          npts2 = Mat(contour2).rows;
+          polylines(img2covered, &pts2, &npts2, 1, true, Scalar(0,0,255));
 		  if(img2covered.cols > 480) resize(img2covered, img2coveredsml, Size(img2covered.cols * 480 /img2covered.rows, 480), 0, 0, INTER_LINEAR);
-		  
           imshow("Right_Img_Calibration", (img2covered.cols > 480 ? img2coveredsml : img2covered));
 		}
         waitKey(1);
+        char c;
+        if(askForAccept) {
+		  cout << " Use image (y/n)? ";
+		  cin >> c;
+		}
+		else
+		  c = 'y';
+		if(c == 'y')
+		{
+		  polylines(img1covered, &pts1, &npts1, 1, true, Scalar(255,255,255));
+		  if(!single_camera) polylines(img2covered, &pts2, &npts2, 1, true, Scalar(255,255,255));
+		  printf("  Accepted\n");
+		}
+		else
+		{
+		  img1covered = img1covered_last.clone();	//reverting to old img1covered
+		  img2covered = img2covered_last.clone();	//reverting to old img2covered
+		  printf("  Rejected\n");
+		  continue;
+		}
 	  }
       
       vector< Point3f > obj;
@@ -226,11 +270,11 @@ void load_image_points(int board_width, int board_height, int first_img, int num
 }
 
 void rectify_images(int first_img, int num_imgs, char* leftimg_dir, char* rightimg_dir, char* leftimg_filename, char* rightimg_filename, 
-                      char* extension, char* leftrectified_dir, char* rightrectified_dir, bool single_camera) {
+                      char* extension, char* leftrectified_dir, char* rightrectified_dir, bool single_camera, int num_imgs_rectify) {
   cv::Mat lmapx, lmapy, rmapx, rmapy;
   cv::Mat imgU1, imgU2;
 
-  for (int i = first_img; i <= num_imgs; i++) {
+  for (int i = first_img; i <= min(num_imgs, first_img + num_imgs_rectify); i++) {
     char left_img[100], right_img[100];
     sprintf(left_img, "%s%s%d.%s", leftimg_dir, leftimg_filename, i, extension);
     if(!single_camera) sprintf(right_img, "%s%s%d.%s", rightimg_dir, rightimg_filename, i, extension);
@@ -261,6 +305,7 @@ void rectify_images(int first_img, int num_imgs, char* leftimg_dir, char* righti
                 K1, D1, Mat(),
                 getOptimalNewCameraMatrix(K1, D1, img1.size(), 1, img1.size(), 0), img1.size(),
                 CV_32F, lmapx, lmapy);
+      remap(img1, imgU1, lmapx, lmapy, cv::INTER_LINEAR);
 	}
     
     resize(imgU1, gray1sml, Size(imgU1.cols * 480 /imgU1.rows, 480), 0, 0, INTER_LINEAR);
@@ -313,10 +358,10 @@ int main(int argc, char const *argv[])
   char* rightimg_filename;
   char* extension;
   char* out_file;
-  int num_imgs, first_img;
+  int num_imgs, first_img, num_imgs_rectify, minCheckerboxDistInPixel;
   char* leftrectified_dir;
   char* rightrectified_dir;
-  int only_rectify = 0, single_camera_calib = 0, camera_calib_already_done = 0;
+  int only_rectify = 0, single_camera_calib = 0, camera_calib_already_done = 0, askForAcceptint = 0;
   
   static struct poptOption options[] = {
     { "board_width",'w',POPT_ARG_INT,&board_width,0,"Checkerboard width","NUM" },
@@ -338,6 +383,9 @@ int main(int argc, char const *argv[])
     { "leftcalib_file",'u',POPT_ARG_STRING,&leftcalib_file,0,"Left camera calibration","STR" },
     { "rightcalib_file",'v',POPT_ARG_STRING,&rightcalib_file,0,"Right camera calibration","STR" },
     { "BlurThreshold",'t',POPT_ARG_FLOAT,&BlurThreshold,0,"Blurriness Threshold","NUM" },
+    { "askForAcceptint",'a',POPT_ARG_INT,&askForAcceptint,0,"askForAccepting pictures","NUM" },
+    { "num_imgs_rectify",'q',POPT_ARG_INT,&num_imgs_rectify,0,"Last checkerboard image number","NUM" },
+    { "minCheckerboxDistInPixel",'k',POPT_ARG_INT,&minCheckerboxDistInPixel,0,"Minimum distance between checkerboxes in pixels","NUM" },
     POPT_AUTOHELP
     { NULL, 0, 0, NULL, 0, NULL, NULL }
   };
@@ -348,7 +396,8 @@ int main(int argc, char const *argv[])
   
   bool single_camera = single_camera_calib != 0;
   bool do_camera_calibration = camera_calib_already_done == 0;
-  
+  bool askForAccept = askForAcceptint == 1;
+  cout << "askForAccept " << askForAccept << " and askForAcceptint " << askForAcceptint << endl;
   namedWindow("Left_Img", CV_WINDOW_AUTOSIZE);
   moveWindow("Left_Img", 100, 20);
   if(!single_camera) namedWindow("Right_Img", CV_WINDOW_AUTOSIZE);
@@ -364,7 +413,8 @@ int main(int argc, char const *argv[])
     printf("Load Image Points\n");
     
     load_image_points(board_width, board_height, first_img, num_imgs, square_size,
-                     leftimg_dir, rightimg_dir, leftimg_filename, rightimg_filename, extension, single_camera);
+                     leftimg_dir, rightimg_dir, leftimg_filename, rightimg_filename, 
+                     extension, single_camera, askForAccept, minCheckerboxDistInPixel);
     
     if(do_camera_calibration)
     {
@@ -492,7 +542,7 @@ int main(int argc, char const *argv[])
   }
       
   rectify_images(first_img, num_imgs, leftimg_dir, rightimg_dir, leftimg_filename, rightimg_filename, 
-                      extension, leftrectified_dir, rightrectified_dir, single_camera);
+                      extension, leftrectified_dir, rightrectified_dir, single_camera, num_imgs_rectify);
   
   printf("Saved rectified images\n");
   
