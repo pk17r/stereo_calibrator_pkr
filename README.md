@@ -6,38 +6,16 @@ Program to do efficient stereo image calibration and rectification. It outputs r
 
 ./calibrate_stereo -w [board_width] -h [board_height] -s [square_size] -p [first_img_number] -n [last_img_num] -u [left_cam_calib] -v [right_cam_calib] -L [left_img_dir] -R [right_img_dir] -l [left_img_prefix] -r [right_img_prefix] -o [output_calib_file] -d [left_rectified_img_dir] -f [right_rectified_img_dir] -j [stereo_calib_already_done_Only_do_undistortion/rectification] -x [only_do_single_camera_calib] -m [camera_calib_already_done] -u [left_cam_calib] -v [right_cam_calib] -t [Blurriness_Threshold] -a [ask_for_accept] -q [no_of_img_to_rectify] -k [minCheckerboxDistInPixel]
 
-./calibrator_pkr -w 14 -h 7 -p 1 -n 119 -s 0.164 -L cam2/ -R cam3/ -l '' -r '' -o stereo2_3.yml -e png -d rectified_cam2/ -f rectified_cam3/ -j 1
 
-./calibrator_pkr -w 9 -h 6  -p 1 -n 27 -s 0.02423 -L ../calib_imgs/1/ -R ../calib_imgs/1/ -l left -r right -o ../calib_imgs/1cam_stereo.yml -e jpg -d ../calib_imgs/1rectified/ -f ../calib_imgs/1rectified/ -j 0
+single camera
+./calibrator_pkr -w 10 -h 7 -p 49 -n 250 -s 0.0525 -L cam3/ -R '' -l '' -r '' -o cam3.yml -e png -d r/ -f '' -j 0 -x 1 -m 0 -u '' -v '' -t 0.00015 -a 0 -q 10 -k 80
+./calibrator_pkr -w 7 -h 6 -p 82 -n 179 -s 0.0925 -L cam1/ -R '' -l '' -r '' -o cam1.yml -e png -d r/ -f '' -j 0 -x 1 -m 0 -u '' -v '' -t 0.000025 -a 0 -q 10 -k 50
+./calibrator_pkr -w 8 -h 6 -p 26 -n 158 -s 0.0247 -L cam3/ -R '' -l '' -r '' -o cam3.yml -e png -d r/ -f '' -j 0 -x 1 -m 0 -u '' -v '' -t 0.00005 -a 0 -q 10 -k 70
 
-./calibrator_pkr -w 9 -h 6  -p 1 -n 27 -s 0.02423 -L 1/ -R 1/ -l left -r right -o 1cam_stereo.yml -e jpg -d 1rectified/ -f 1rectified/ -j 0
+stereo
+./calibrator_pkr -w 10 -h 7 -p 55 -n 239 -s 0.0525 -L stereo13b/cam1/ -R stereo13b/cam3/ -l '' -r '' -o stereo13b/cam13calib.yml -e png -d stereo13b/cam1r/ -f stereo13b/cam3r/ -j 0 -x 0 -m 0 -u '' -v '' -t 0.00015 -a 0 -q 10 -k 70
+./calibrator_pkr -w 10 -h 7 -p 49 -n 234 -s 0.0525 -L cam1/ -R cam2/ -l '' -r '' -o cam12calib.yml -e png -d cam1r/ -f cam2r/ -j 0 -x 0 -m 1 -u cam1.yml -v cam2.yml -t 0.00015 -a 0 -q 10 -k 50./calibrator_pkr -w 15 -h 10 -p 46 -n 122 -s 0.0525 -L cam1/ -R cam3/ -l '' -r '' -o cam13calib.yml -e png -d cam1r/ -f cam3r/ -j 0 -x 0 -m 1 -u cam1.yml -v cam3.yml -t 0.00003 -a 0 -q 10 -k 50
+./calibrator_pkr -w 8 -h 6 -p 62 -n 166 -s 0.0247 -L cam1/ -R cam2/ -l '' -r '' -o cam12calib.yml -e png -d cam1r/ -f cam2r/ -j 0 -x 0 -m 1 -u cam1.yml -v cam2.yml -t 0.00003 -a 0 -q 10 -k 50
 
-./calibrator_pkr -w 14 -h 7 -p 291 -n 300 -s 0.164 -L cam1/ -R cam2/ -l '' -r '' -o stereo_calib.yml -e png -d cam1r/ -f cam2r/ -j 0
-
-
-./calibrator_pkr -w 14 -h 7 -p 1 -n 300 -s 0.164 -L cam1/ -R cam2/ -l '' -r '' -o stereo_calib.yml -e png -d cam1r/ -f cam2r/ -j 0 -x 0 -m 0 -u '' -v ''
-./calibrator_pkr -w 14 -h 7 -p 1 -n 338 -s 0.164 -L cam1/ -R a/ -l '' -r '' -o cam1calib.yml -e png -d cam1r/ -f a/ -j 0 -x 1 -m 0 -u '' -v ''
-
-
-/home/pkr/pkr-work/focus_at_25m_(15m & 35m in focus)/single_cam_calibration_2/cam1 (copy)
-
-./calibrator_pkr -w 9 -h 6 -p 1 -n 27 -s 0.02423 -L "/home/pkr/pkr-work/stereo-calibration/calib_imgs/1/" -R "/home/pkr/pkr-work/stereo-calibration/calib_imgs/1/" -l left -r right -o "/home/pkr/pkr-work/stereo-calibration/calib_imgs/may18stereo1.yml" -e jpg -d "/home/pkr/pkr-work/stereo-calibration/calib_imgs/1rectified/" -f "/home/pkr/pkr-work/stereo-calibration/calib_imgs/1rectified/" -j 0 -x 0 -m 0 -u '' -v ''
-
-
-
-./calibrator_pkr -w 14 -h 7 -p 16 -n 55 -s 0.164 -L cam1/ -R cam2/ -l '' -r '' -o cam1_2_stereo_calib.yml -e png -d cam1r_12/ -f cam2r_12/ -j 0 -x 0 -m 1 -u cam1calib.yml -v cam2calib.yml -t 0.0002 -a 1 -q 10
-./calibrator_pkr -w 14 -h 7 -p 16 -n 55 -s 0.164 -L cam2/ -R cam3/ -l '' -r '' -o cam2_3_stereo_calib.yml -e png -d cam2r_23/ -f cam3r_23/ -j 0 -x 0 -m 1 -u cam2calib.yml -v cam3calib.yml -t 0.0002
-./calibrator_pkr -w 14 -h 7 -p 16 -n 55 -s 0.164 -L cam1/ -R cam3/ -l '' -r '' -o cam1_3_stereo_calib.yml -e png -d cam1r_13/ -f cam3r_13/ -j 0 -x 0 -m 1 -u cam1calib.yml -v cam3calib.yml -t 0.0002
-
-
-./calibrator_pkr -w 14 -h 7 -p 1 -n 262 -s 0.164 -L cam2/ -R a/ -l '' -r '' -o cam2calib.yml -e png -d cam2r/ -f a/ -j 0 -x 1 -m 0 -u a.yml -v a.yml -t 0.00004 -a 1 -q 40 -k 10
-./calibrator_pkr -w 14 -h 7 -p 1 -n 150 -s 0.164 -L cam12/cam1/ -R cam12/cam2/ -l '' -r '' -o cam12/cam12calib.yml -e png -d cam12/cam1r/ -f cam12/cam2r/ -j 0 -x 0 -m 1 -u cam1calib.yml -v cam2calib.yml -t 0.00004 -a 1 -q 40
-
-./calibrator_pkr -w 9 -h 6 -p 1 -n 192 -s 0.092 -L cam1/ -R a/ -l '' -r '' -o cam1calib.yml -e png -d cam1r/ -f a/ -j 0 -x 1 -m 0 -u a.yml -v a.yml -t 0.000055 -a 0 -q 40 -k 40
-
-./calibrator_pkr -w 9 -h 6 -p 35 -n 355 -s 0.092 -L cam2/ -R cam3/ -l '' -r '' -o cam23calib.yml -e png -d cam2r/ -f cam3r/ -j 0 -x 0 -m 0 -u '' -v '' -t 0.00004 -a 0 -q 100 -k 50
-
-
-./calibrator_pkr -w 7 -h 6 -p 2 -n 130 -s 0.092 -L stereo/cam2/ -R stereo/cam3/ -l '' -r '' -o cam23calib.yml -e png -d stereo/cam2r/ -f stereo/cam3r/ -j 0 -x 0 -m 1 -u mono/cam2.yml -v mono/cam3.yml -t 0.0002 -a 0 -q 130 -k 20
-
-./calibrator_pkr -w 7 -h 6 -p 1 -n 320 -s 0.092 -L mono/cam2/ -R '' -l '' -r '' -o cam2.yml -e png -d mono/cam2r/ -f '' -j 0 -x 1 -m 0 -u '' -v '' -t 0.0001 -a 0 -q 320 -k 50
+only rectification
+./calibrator_pkr -w 15 -h 10 -p 31 -n 32 -s 0.0525 -L cam1/ -R cam3/ -l '' -r '' -o cam13calib.yml -e png -d cam1r/ -f cam3r/ -j 1 -x 0 -m 1 -u cam2.yml -v cam3.yml -t 0.00004 -a 0 -q 5 -k 0
