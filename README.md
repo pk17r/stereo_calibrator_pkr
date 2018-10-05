@@ -11,11 +11,17 @@ single camera
 ./calibrator_pkr -w 10 -h 7 -p 49 -n 250 -s 0.0525 -L cam3/ -R '' -l '' -r '' -o cam3.yml -e png -d r/ -f '' -j 0 -x 1 -m 0 -u '' -v '' -t 0.00015 -a 0 -q 10 -k 80
 ./calibrator_pkr -w 7 -h 6 -p 82 -n 179 -s 0.0925 -L cam1/ -R '' -l '' -r '' -o cam1.yml -e png -d r/ -f '' -j 0 -x 1 -m 0 -u '' -v '' -t 0.000025 -a 0 -q 10 -k 50
 ./calibrator_pkr -w 8 -h 6 -p 26 -n 158 -s 0.0247 -L cam3/ -R '' -l '' -r '' -o cam3.yml -e png -d r/ -f '' -j 0 -x 1 -m 0 -u '' -v '' -t 0.00005 -a 0 -q 10 -k 70
+./calibrator_pkr -w 10 -h 7 -p 103 -n 246 -s 0.0525 -L cam1/ -R '' -l '' -r '' -o cam1.yml -e png -d cam1r/ -f '' -j 0 -x 1 -m 0 -u '' -v '' -t 0.00015 -a 0 -q 10 -k 50
 
 stereo
 ./calibrator_pkr -w 10 -h 7 -p 55 -n 239 -s 0.0525 -L stereo13b/cam1/ -R stereo13b/cam3/ -l '' -r '' -o stereo13b/cam13calib.yml -e png -d stereo13b/cam1r/ -f stereo13b/cam3r/ -j 0 -x 0 -m 0 -u '' -v '' -t 0.00015 -a 0 -q 10 -k 70
-./calibrator_pkr -w 10 -h 7 -p 49 -n 234 -s 0.0525 -L cam1/ -R cam2/ -l '' -r '' -o cam12calib.yml -e png -d cam1r/ -f cam2r/ -j 0 -x 0 -m 1 -u cam1.yml -v cam2.yml -t 0.00015 -a 0 -q 10 -k 50./calibrator_pkr -w 15 -h 10 -p 46 -n 122 -s 0.0525 -L cam1/ -R cam3/ -l '' -r '' -o cam13calib.yml -e png -d cam1r/ -f cam3r/ -j 0 -x 0 -m 1 -u cam1.yml -v cam3.yml -t 0.00003 -a 0 -q 10 -k 50
+./calibrator_pkr -w 15 -h 10 -p 46 -n 122 -s 0.0525 -L cam1/ -R cam3/ -l '' -r '' -o cam13calib.yml -e png -d cam1r/ -f cam3r/ -j 0 -x 0 -m 1 -u cam1.yml -v cam3.yml -t 0.00003 -a 0 -q 10 -k 50
 ./calibrator_pkr -w 8 -h 6 -p 62 -n 166 -s 0.0247 -L cam1/ -R cam2/ -l '' -r '' -o cam12calib.yml -e png -d cam1r/ -f cam2r/ -j 0 -x 0 -m 1 -u cam1.yml -v cam2.yml -t 0.00003 -a 0 -q 10 -k 50
+./calibrator_pkr -w 10 -h 7 -p 42 -n 115 -s 0.0525 -L cam1/ -R cam3/ -l '' -r '' -o cam13calib.yml -e png -d cam1r/ -f cam3r/ -j 0 -x 0 -m 1 -u '' -v '' -t 0.0002 -a 0 -q 20 -k 30
 
 only rectification
 ./calibrator_pkr -w 15 -h 10 -p 31 -n 32 -s 0.0525 -L cam1/ -R cam3/ -l '' -r '' -o cam13calib.yml -e png -d cam1r/ -f cam3r/ -j 1 -x 0 -m 1 -u cam2.yml -v cam3.yml -t 0.00004 -a 0 -q 5 -k 0
+
+
+
+
