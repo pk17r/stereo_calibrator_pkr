@@ -2,7 +2,7 @@
 
 Program to do efficient stereo image calibration and rectification. It outputs rectified images as well as camera intrinsic and extrinsic matrices.
 
-![alt text](https://github.com/pk17r/pose_estimation/blob/master/info/Slide17.PNG)
+![alt text](https://github.com/pk17r/stereo_calibrator_pkr/blob/master/StereoCalibProg.png)
 
 
 ### Calibration and Undistortion/Rectification
