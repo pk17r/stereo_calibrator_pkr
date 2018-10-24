@@ -5,7 +5,8 @@ Program to do efficient stereo image calibration and rectification. It outputs r
 ![alt text](https://github.com/pk17r/stereo_calibrator_pkr/blob/master/StereoCalibProg.png)
 
 
-### Calibration and Undistortion/Rectification
+
+### Usage
 
 ./calibrate_stereo -w [board_width] -h [board_height] -s [square_size] -p [first_img_number] -n [last_img_num] -u [left_cam_calib] -v [right_cam_calib] -L [left_img_dir] -R [right_img_dir] -l [left_img_prefix] -r [right_img_prefix] -o [output_calib_file] -d [left_rectified_img_dir] -f [right_rectified_img_dir] -j [stereo_calib_already_done_Only_do_undistortion/rectification] -x [only_do_single_camera_calib] -m [camera_calib_already_done] -u [left_cam_calib] -v [right_cam_calib] -t [Blurriness_Threshold] -a [ask_for_accept] -q [no_of_img_to_rectify] -k [minCheckerboxDistInPixel]
 
